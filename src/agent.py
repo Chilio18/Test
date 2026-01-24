@@ -17,7 +17,8 @@ class CarSalesAgent:
         api_key: Optional[str] = None,
         model: str = "claude-sonnet-4-20250514",
         dealership_config: Optional[dict] = None,
-        inventory_path: Optional[str] = None
+        inventory_path: Optional[str] = None,
+        language: str = "en"
     ):
         """Initialize the car sales agent.
 
@@ -26,10 +27,12 @@ class CarSalesAgent:
             model: Claude model to use.
             dealership_config: Dealership information for the system prompt.
             inventory_path: Path to the vehicle inventory JSON file.
+            language: Language code ('en' for English, 'nl' for Dutch).
         """
         self.client = anthropic.Anthropic(api_key=api_key)
         self.model = model
         self.dealership_config = dealership_config or {}
+        self.language = language
 
         # Initialize tools
         self.inventory_tools = InventoryTools(inventory_path)
@@ -94,7 +97,8 @@ class CarSalesAgent:
             channel=channel,
             customer_name=lead.display_name if lead else "Valued Customer",
             lead_status=lead.status.value if lead else "new",
-            interaction_summary=lead.conversation_summary or "No previous interactions" if lead else "No previous interactions"
+            interaction_summary=lead.conversation_summary or "No previous interactions" if lead else "No previous interactions",
+            language=self.language
         )
 
     def start_conversation(

@@ -31,6 +31,12 @@ def main():
         default=None,
         help="Path to inventory JSON file"
     )
+    parser.add_argument(
+        "--language", "-l",
+        choices=["en", "nl"],
+        default="en",
+        help="Language for the agent (en=English, nl=Nederlands/Dutch)"
+    )
     args = parser.parse_args()
 
     # Check for API key
@@ -42,21 +48,36 @@ def main():
     # Initialize agent
     inventory_path = args.inventory or str(Path(__file__).parent / "data" / "sample_inventory.json")
 
-    dealership_config = {
-        "name": args.dealership,
-        "address": "123 Auto Drive, Car City, CC 12345",
-        "phone": "+1-555-AUTO-SALE",
-        "email": "sales@premiumauto.example.com",
-        "website": "https://premiumauto.example.com",
-        "business_hours": "Monday-Saturday, 9:00 AM - 6:00 PM",
-        "business_hours_start": "09:00",
-        "business_hours_end": "18:00",
-        "business_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-    }
+    # Use Dutch defaults if language is nl
+    if args.language == "nl":
+        dealership_config = {
+            "name": args.dealership if args.dealership != "Premium Auto Sales" else "Premium Auto Verkoop",
+            "address": "Autoweg 123, 1234 AB Amsterdam",
+            "phone": "+31-20-555-1234",
+            "email": "verkoop@premiumauto.nl",
+            "website": "https://premiumauto.nl",
+            "business_hours": "Maandag-Zaterdag, 9:00 - 18:00",
+            "business_hours_start": "09:00",
+            "business_hours_end": "18:00",
+            "business_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        }
+    else:
+        dealership_config = {
+            "name": args.dealership,
+            "address": "123 Auto Drive, Car City, CC 12345",
+            "phone": "+1-555-AUTO-SALE",
+            "email": "sales@premiumauto.example.com",
+            "website": "https://premiumauto.example.com",
+            "business_hours": "Monday-Saturday, 9:00 AM - 6:00 PM",
+            "business_hours_start": "09:00",
+            "business_hours_end": "18:00",
+            "business_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        }
 
+    lang_name = "Nederlands" if args.language == "nl" else "English"
     print(f"\n{'='*60}")
     print(f"  Car Sales AI Agent - {args.dealership}")
-    print(f"  Channel: {args.channel}")
+    print(f"  Channel: {args.channel} | Language: {lang_name}")
     print(f"{'='*60}")
     print("\nType 'quit' or 'exit' to end the conversation")
     print("Type 'lead' to see the current lead summary")
@@ -66,7 +87,8 @@ def main():
     agent = CarSalesAgent(
         model="claude-sonnet-4-20250514",
         dealership_config=dealership_config,
-        inventory_path=inventory_path
+        inventory_path=inventory_path,
+        language=args.language
     )
 
     # Start a conversation
