@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wittebrug - Chat met ons</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <style>
+        /* Demo page styling */
+        .demo-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: white;
+            text-align: center;
+        }
+        .demo-logo {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .demo-tagline {
+            font-size: 20px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        .demo-features {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .demo-feature {
+            background: rgba(255,255,255,0.1);
+            padding: 24px 32px;
+            border-radius: 12px;
+            max-width: 200px;
+        }
+        .demo-feature h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .demo-feature p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .demo-cta {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        .demo-cta span {
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo landing page content -->
+    <div class="demo-page">
+        <div class="demo-logo">Wittebrug</div>
+        <p class="demo-tagline">Meer dan auto's</p>
+
+        <div class="demo-features">
+            <div class="demo-feature">
+                <h3>Proefrit plannen</h3>
+                <p>Plan eenvoudig een proefrit met uw droomauto</p>
+            </div>
+            <div class="demo-feature">
+                <h3>Inruil taxatie</h3>
+                <p>Ontvang direct een indicatie voor uw huidige auto</p>
+            </div>
+            <div class="demo-feature">
+                <h3>Advies op maat</h3>
+                <p>Persoonlijk advies voor de beste keuze</p>
+            </div>
+        </div>
+
+        <p class="demo-cta">
+            Klik op de chat-knop rechtsonder <span>👇</span>
+        </p>
+    </div>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <button class="chat-button" onclick="toggleChat()">
+            <svg class="chat-icon" viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/>
+                <path d="M7 9h10v2H7zm0-3h10v2H7z"/>
+            </svg>
+            <svg class="close-icon" viewBox="0 0 24 24">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+        </button>
+
+        <div class="chat-window">
+            <div class="chat-header">
+                <div class="chat-header-avatar">🚗</div>
+                <div class="chat-header-info">
+                    <h3>Wittebrug Assistent</h3>
+                    <p>We helpen u graag verder</p>
+                </div>
+                <div class="chat-header-status">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">Online</span>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Welcome message -->
+                <div class="message agent">
+                    <div class="message-bubble">
+                        Welkom bij Wittebrug! 👋<br><br>
+                        Ik ben uw digitale assistent en help u graag met:
+                        <ul style="margin: 8px 0 0 16px;">
+                            <li>Informatie over onze auto's</li>
+                            <li>Een proefrit inplannen</li>
+                            <li>Uw inruilauto taxeren</li>
+                            <li>Een offerte aanvragen</li>
+                        </ul>
+                        <br>Waar kan ik u mee helpen?
+                    </div>
+                    <div class="message-meta">Wittebrug Assistent</div>
+                </div>
+            </div>
+
+            <div class="quick-replies" id="quickReplies">
+                <button class="quick-reply-btn" onclick="sendQuickReply('Ik zoek een nieuwe auto')">
+                    Nieuwe auto zoeken
+                </button>
+                <button class="quick-reply-btn" onclick="sendQuickReply('Ik wil graag een proefrit maken')">
+                    Proefrit plannen
+                </button>
+                <button class="quick-reply-btn" onclick="sendQuickReply('Ik wil mijn auto inruilen')">
+                    Auto inruilen
+                </button>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="chat-input-wrapper">
+                    <textarea
+                        class="chat-input"
+                        id="chatInput"
+                        placeholder="Typ uw bericht..."
+                        rows="1"
+                        onkeydown="handleKeyDown(event)"
+                        oninput="autoGrow(this)"
+                    ></textarea>
+                    <button class="chat-send-btn" id="sendBtn" onclick="sendMessage()">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/chat-widget.js"></script>
+</body>
+</html>

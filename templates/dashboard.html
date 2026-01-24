@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wittebrug - Verkoper Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar with conversation list -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="logo">Wittebrug</span>
+                <span style="font-size: 12px; color: var(--gray-500);">Dashboard</span>
+            </div>
+
+            <div class="sidebar-search">
+                <input type="text" class="search-input" placeholder="Zoek gesprekken..." id="searchInput" oninput="filterConversations()">
+            </div>
+
+            <div class="conversation-list" id="conversationList">
+                <!-- Conversations will be loaded here -->
+                <div class="empty-state" id="emptyConversations">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/>
+                    </svg>
+                    <h3>Geen actieve gesprekken</h3>
+                    <p>Nieuwe gesprekken verschijnen hier automatisch</p>
+                </div>
+            </div>
+
+            <div style="padding: 16px; border-top: 1px solid var(--gray-200);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                        VM
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 14px;">Verkoper</div>
+                        <div style="font-size: 12px; color: var(--gray-500);">Wittebrug Forepark</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content area -->
+        <main class="main-content">
+            <!-- Empty state when no conversation selected -->
+            <div class="empty-state" id="noConversationSelected">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/>
+                </svg>
+                <h3>Selecteer een gesprek</h3>
+                <p>Klik op een gesprek in de lijst om het te bekijken</p>
+            </div>
+
+            <!-- Active conversation view (hidden by default) -->
+            <div id="activeConversation" style="display: none; flex-direction: column; height: 100%;">
+                <header class="main-header">
+                    <div class="main-header-info">
+                        <h2 id="conversationCustomerName">Klant naam</h2>
+                        <span class="badge ai" id="conversationModeBadge">AI Modus</span>
+                    </div>
+                    <div class="main-header-actions">
+                        <button class="btn btn-outline" onclick="viewLeadDetails()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                            </svg>
+                            Lead Info
+                        </button>
+                        <button class="btn btn-success" id="takeoverBtn" onclick="takeoverConversation()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Gesprek overnemen
+                        </button>
+                        <button class="btn btn-outline" id="handbackBtn" onclick="handbackToAI()" style="display: none;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/>
+                            </svg>
+                            Terug naar AI
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Takeover banner -->
+                <div class="takeover-banner" id="takeoverBanner">
+                    <p>
+                        <strong>U heeft dit gesprek overgenomen.</strong>
+                        De AI-assistent is gepauzeerd. Uw berichten worden direct naar de klant gestuurd.
+                    </p>
+                </div>
+
+                <div class="dashboard-chat">
+                    <!-- Chat area -->
+                    <div class="chat-area">
+                        <div class="dashboard-messages" id="dashboardMessages">
+                            <!-- Messages will be loaded here -->
+                        </div>
+
+                        <div class="dashboard-input-area">
+                            <div class="dashboard-input-wrapper">
+                                <textarea
+                                    class="dashboard-input"
+                                    id="dashboardInput"
+                                    placeholder="Typ een bericht naar de klant..."
+                                    rows="1"
+                                    onkeydown="handleDashboardKeyDown(event)"
+                                    oninput="autoGrowDashboard(this)"
+                                    disabled
+                                ></textarea>
+                                <button class="btn btn-primary" id="dashboardSendBtn" onclick="sendDashboardMessage()" disabled>
+                                    Versturen
+                                </button>
+                            </div>
+                            <p style="font-size: 12px; color: var(--gray-500); margin-top: 8px;" id="inputHint">
+                                Neem het gesprek over om berichten te versturen
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Lead panel -->
+                    <aside class="lead-panel" id="leadPanel">
+                        <div class="lead-panel-header">
+                            <h3 id="leadName">Lead informatie</h3>
+                            <p id="leadSource">Bron: Website</p>
+                        </div>
+
+                        <div class="lead-section">
+                            <h4>Contact gegevens</h4>
+                            <div class="lead-field">
+                                <span class="lead-field-label">Telefoon</span>
+                                <span class="lead-field-value" id="leadPhone">-</span>
+                            </div>
+                            <div class="lead-field">
+                                <span class="lead-field-label">E-mail</span>
+                                <span class="lead-field-value" id="leadEmail">-</span>
+                            </div>
+                            <div class="lead-field">
+                                <span class="lead-field-label">Voorkeur</span>
+                                <span class="lead-field-value" id="leadContactPref">-</span>
+                            </div>
+                        </div>
+
+                        <div class="lead-section">
+                            <h4>Kwalificatie (BANT)</h4>
+                            <div class="qualification-scores">
+                                <div class="score-item">
+                                    <span class="score-label">Budget</span>
+                                    <div class="score-bar">
+                                        <div class="score-fill" id="budgetScore" style="width: 0%"></div>
+                                    </div>
+                                    <span class="score-value" id="budgetValue">0</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Autoriteit</span>
+                                    <div class="score-bar">
+                                        <div class="score-fill" id="authorityScore" style="width: 0%"></div>
+                                    </div>
+                                    <span class="score-value" id="authorityValue">0</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Noodzaak</span>
+                                    <div class="score-bar">
+                                        <div class="score-fill" id="needScore" style="width: 0%"></div>
+                                    </div>
+                                    <span class="score-value" id="needValue">0</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">Tijdlijn</span>
+                                    <div class="score-bar">
+                                        <div class="score-fill" id="timelineScore" style="width: 0%"></div>
+                                    </div>
+                                    <span class="score-value" id="timelineValue">0</span>
+                                </div>
+                            </div>
+                            <div style="margin-top: 12px; padding: 10px; background: var(--gray-50); border-radius: 8px;">
+                                <div style="font-size: 12px; color: var(--gray-500);">Totaal score</div>
+                                <div style="font-size: 24px; font-weight: 700; color: var(--primary);" id="totalScore">0/40</div>
+                                <span class="badge" id="qualificationBadge" style="margin-top: 4px;">Koud</span>
+                            </div>
+                        </div>
+
+                        <div class="lead-section">
+                            <h4>Interesse</h4>
+                            <div class="lead-field">
+                                <span class="lead-field-label">Voertuig(en)</span>
+                                <span class="lead-field-value" id="leadVehicles">-</span>
+                            </div>
+                            <div class="lead-field">
+                                <span class="lead-field-label">Inruil</span>
+                                <span class="lead-field-value" id="leadTradeIn">Nee</span>
+                            </div>
+                        </div>
+
+                        <div class="lead-section">
+                            <h4>Notities</h4>
+                            <div class="notes-list" id="leadNotes">
+                                <p style="font-size: 13px; color: var(--gray-500);">Nog geen notities</p>
+                            </div>
+                            <button class="btn btn-outline" style="width: 100%; margin-top: 12px;" onclick="addNote()">
+                                + Notitie toevoegen
+                            </button>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Note Modal -->
+    <div id="noteModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 24px; border-radius: 12px; width: 400px; max-width: 90%;">
+            <h3 style="margin-bottom: 16px;">Notitie toevoegen</h3>
+            <textarea id="noteInput" style="width: 100%; height: 100px; padding: 12px; border: 1px solid var(--gray-300); border-radius: 8px; font-family: inherit; resize: none;" placeholder="Typ uw notitie..."></textarea>
+            <div style="display: flex; gap: 12px; margin-top: 16px; justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="closeNoteModal()">Annuleren</button>
+                <button class="btn btn-primary" onclick="saveNote()">Opslaan</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
