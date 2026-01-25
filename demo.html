@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wittebrug Car Sales AI - Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #e53e3e;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --info: #3182ce;
+            --white: #ffffff;
+            --gray-50: #f7fafc;
+            --gray-100: #edf2f7;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e0;
+            --gray-400: #a0aec0;
+            --gray-500: #718096;
+            --gray-600: #4a5568;
+            --gray-700: #2d3748;
+            --gray-800: #1a202c;
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-full: 9999px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 24px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .logo span {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-tab {
+            padding: 10px 24px;
+            border: none;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            background: var(--gray-200);
+        }
+
+        .nav-tab.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Main content */
+        .main {
+            flex: 1;
+            display: flex;
+            padding: 32px;
+            gap: 32px;
+        }
+
+        /* Chat panel */
+        .chat-panel {
+            flex: 1;
+            max-width: 450px;
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--white);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .chat-header-info h3 {
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .chat-header-info p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .chat-status {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: var(--radius-full);
+        }
+
+        .status-dot.human {
+            background: var(--info);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background: var(--gray-50);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 85%;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .message.user { align-self: flex-end; }
+        .message.agent { align-self: flex-start; }
+
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: var(--radius-lg);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.user .message-bubble {
+            background: var(--primary);
+            color: var(--white);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.agent .message-bubble {
+            background: var(--white);
+            color: var(--gray-800);
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .message-meta {
+            font-size: 11px;
+            color: var(--gray-500);
+            padding: 0 4px;
+        }
+
+        .message.user .message-meta { text-align: right; }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            align-self: flex-start;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--gray-400);
+            border-radius: var(--radius-full);
+            animation: typing 1.4s ease-in-out infinite;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+
+        .human-banner {
+            padding: 10px 16px;
+            background: var(--info);
+            color: var(--white);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .human-banner.active { display: flex; }
+
+        .quick-replies {
+            padding: 8px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: var(--white);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .quick-reply {
+            padding: 8px 16px;
+            border: 1px solid var(--primary);
+            border-radius: var(--radius-full);
+            background: var(--white);
+            color: var(--primary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-reply:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .request-human {
+            padding: 8px 16px;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .request-human-btn {
+            width: 100%;
+            padding: 10px 16px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            background: var(--white);
+            color: var(--gray-600);
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .request-human-btn:hover {
+            background: var(--gray-100);
+            border-color: var(--gray-400);
+        }
+
+        .chat-input-area {
+            padding: 16px;
+            background: var(--white);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            padding: 12px 16px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-lg);
+            background: var(--primary);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .send-btn:hover { background: var(--primary-light); }
+
+        .send-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--white);
+        }
+
+        /* Info panel */
+        .info-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .info-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .info-card h3 {
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-card h3 span { font-size: 20px; }
+
+        .lead-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .lead-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .lead-field label {
+            font-size: 12px;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .lead-field span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+
+        .score-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .score-section h4 {
+            font-size: 14px;
+            color: var(--gray-700);
+            margin-bottom: 12px;
+        }
+
+        .score-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .score-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .score-label {
+            width: 80px;
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .score-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: var(--radius-full);
+            transition: width 0.5s ease;
+        }
+
+        .score-value {
+            width: 30px;
+            text-align: right;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.hot { background: var(--accent); color: var(--white); }
+        .badge.warm { background: var(--warning); color: var(--gray-800); }
+        .badge.cool { background: var(--info); color: var(--white); }
+        .badge.cold { background: var(--gray-400); color: var(--white); }
+
+        /* Inventory */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .car-card {
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .car-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .car-card.selected {
+            border-color: var(--primary);
+            background: #ebf8ff;
+        }
+
+        .car-brand {
+            font-size: 12px;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .car-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin: 4px 0;
+        }
+
+        .car-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .car-details {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        /* Dashboard view */
+        .dashboard-view {
+            display: none;
+            flex: 1;
+        }
+
+        .dashboard-view.active { display: flex; }
+        .customer-view.active { display: flex; }
+
+        .dashboard-sidebar {
+            width: 320px;
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            margin-right: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .sidebar-header h3 {
+            font-size: 16px;
+            color: var(--gray-800);
+        }
+
+        .conversation-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .conversation-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--gray-100);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .conversation-item:hover { background: var(--gray-50); }
+        .conversation-item.active {
+            background: var(--gray-100);
+            border-left: 3px solid var(--primary);
+        }
+
+        .conv-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .conv-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .conv-time {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .conv-preview {
+            font-size: 13px;
+            color: var(--gray-600);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conv-badges {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .conv-badges .badge {
+            font-size: 10px;
+            padding: 2px 8px;
+        }
+
+        .dashboard-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .action-bar {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .action-bar h2 {
+            font-size: 18px;
+            color: var(--gray-800);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover { background: var(--primary-light); }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-outline {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            color: var(--gray-700);
+        }
+
+        .btn-outline:hover {
+            background: var(--gray-50);
+        }
+
+        .takeover-banner {
+            background: var(--info);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .takeover-banner.active { display: flex; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main { flex-direction: column; }
+            .chat-panel { max-width: 100%; }
+            .info-panel { order: -1; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">W</div>
+            <div>
+                <h1>Wittebrug</h1>
+                <span>Car Sales AI Assistant</span>
+            </div>
+        </div>
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showView('customer')">Klant Chat</button>
+            <button class="nav-tab" onclick="showView('dashboard')">Verkoper Dashboard</button>
+        </nav>
+    </header>
+
+    <main class="main">
+        <!-- Customer View -->
+        <div class="customer-view active" id="customerView">
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <div class="chat-avatar">W</div>
+                    <div class="chat-header-info">
+                        <h3>Wittebrug Assistent</h3>
+                        <p>Uw persoonlijke auto-adviseur</p>
+                    </div>
+                    <div class="chat-status">
+                        <div class="status-dot" id="statusDot"></div>
+                        <span id="statusText">Online</span>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message agent">
+                        <div class="message-bubble">
+                            Welkom bij Wittebrug! Ik ben uw digitale assistent en help u graag bij het vinden van uw ideale auto.
+                            <br><br>
+                            Waarmee kan ik u vandaag helpen?
+                        </div>
+                        <div class="message-meta">Wittebrug Assistent</div>
+                    </div>
+                </div>
+
+                <div class="human-banner" id="humanBanner">
+                    <span>U spreekt nu met een Wittebrug medewerker</span>
+                </div>
+
+                <div class="quick-replies" id="quickReplies">
+                    <button class="quick-reply" onclick="sendQuickReply('Ik zoek een nieuwe auto')">Nieuwe auto zoeken</button>
+                    <button class="quick-reply" onclick="sendQuickReply('Ik wil graag een proefrit maken')">Proefrit plannen</button>
+                    <button class="quick-reply" onclick="sendQuickReply('Ik wil mijn auto inruilen')">Auto inruilen</button>
+                </div>
+
+                <div class="request-human" id="requestHumanSection">
+                    <button class="request-human-btn" onclick="requestHuman()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        Spreek met een medewerker
+                    </button>
+                </div>
+
+                <div class="chat-input-area">
+                    <div class="chat-input-wrapper">
+                        <textarea class="chat-input" id="chatInput" placeholder="Typ uw bericht..." rows="1" onkeydown="handleKeyDown(event)"></textarea>
+                        <button class="send-btn" onclick="sendMessage()">
+                            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <div class="info-card">
+                    <h3><span>📊</span> Lead Informatie</h3>
+                    <div class="lead-info">
+                        <div class="lead-field">
+                            <label>Naam</label>
+                            <span id="leadName">-</span>
+                        </div>
+                        <div class="lead-field">
+                            <label>Status</label>
+                            <span id="leadStatus"><span class="badge cold">Nieuw</span></span>
+                        </div>
+                        <div class="lead-field">
+                            <label>Interesse</label>
+                            <span id="leadInterest">-</span>
+                        </div>
+                        <div class="lead-field">
+                            <label>Budget</label>
+                            <span id="leadBudget">-</span>
+                        </div>
+                    </div>
+                    <div class="score-section">
+                        <h4>BANT Kwalificatie Score</h4>
+                        <div class="score-bars">
+                            <div class="score-item">
+                                <span class="score-label">Budget</span>
+                                <div class="score-bar"><div class="score-fill" id="budgetScore" style="width: 0%"></div></div>
+                                <span class="score-value" id="budgetValue">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Authority</span>
+                                <div class="score-bar"><div class="score-fill" id="authorityScore" style="width: 0%"></div></div>
+                                <span class="score-value" id="authorityValue">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Need</span>
+                                <div class="score-bar"><div class="score-fill" id="needScore" style="width: 0%"></div></div>
+                                <span class="score-value" id="needValue">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Timeline</span>
+                                <div class="score-bar"><div class="score-fill" id="timelineScore" style="width: 0%"></div></div>
+                                <span class="score-value" id="timelineValue">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3><span>🚗</span> Beschikbare Auto's</h3>
+                    <div class="inventory-grid" id="inventoryGrid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard View -->
+        <div class="dashboard-view" id="dashboardView">
+            <div class="dashboard-sidebar">
+                <div class="sidebar-header">
+                    <h3>Actieve Gesprekken</h3>
+                </div>
+                <div class="conversation-list" id="conversationList"></div>
+            </div>
+
+            <div class="dashboard-main">
+                <div class="action-bar">
+                    <h2 id="dashboardTitle">Selecteer een gesprek</h2>
+                    <div class="action-buttons">
+                        <button class="btn btn-outline" onclick="handBack()" id="handBackBtn" style="display: none;">
+                            Terug naar AI
+                        </button>
+                        <button class="btn btn-primary" onclick="takeOver()" id="takeOverBtn" style="display: none;">
+                            Gesprek overnemen
+                        </button>
+                    </div>
+                </div>
+
+                <div class="takeover-banner" id="takeoverBanner">
+                    <span>U heeft dit gesprek overgenomen. De klant weet dat zij met een medewerker spreken.</span>
+                    <button class="btn btn-outline" onclick="handBack()">Terug naar AI</button>
+                </div>
+
+                <div class="info-card" style="flex: 1;">
+                    <h3><span>💬</span> Gesprek</h3>
+                    <div class="chat-messages" id="dashboardMessages" style="height: 400px;">
+                        <p style="color: var(--gray-500); text-align: center; padding: 40px;">
+                            Selecteer een gesprek aan de linkerkant om het te bekijken
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sample inventory data
+        const inventory = [
+            { id: 'WB001', make: 'Volkswagen', model: 'Golf', trim: 'Style 1.5 TSI', price: 37500, fuel: 'Benzine', transmission: 'Automaat', location: 'Den Haag' },
+            { id: 'WB002', make: 'Audi', model: 'A3 Sportback', trim: 'S line 35 TFSI', price: 46500, fuel: 'Benzine', transmission: 'Automaat', location: 'Den Haag' },
+            { id: 'WB003', make: 'SEAT', model: 'Leon', trim: 'FR 1.5 TSI', price: 34200, fuel: 'Benzine', transmission: 'Manueel', location: 'Voorschoten' },
+            { id: 'WB004', make: 'Skoda', model: 'Octavia Combi', trim: 'Style 1.5 TSI', price: 38500, fuel: 'Benzine', transmission: 'Automaat', location: 'Den Haag' },
+            { id: 'WB005', make: 'CUPRA', model: 'Formentor', trim: 'VZ 2.0 TSI', price: 55000, fuel: 'Benzine', transmission: 'Automaat', location: 'Rotterdam' },
+            { id: 'WB009', make: 'Volkswagen', model: 'ID.4', trim: 'Pro Performance', price: 48500, fuel: 'Elektrisch', transmission: 'Automaat', location: 'Den Haag' },
+            { id: 'WB010', make: 'Audi', model: 'Q4 e-tron', trim: '50 quattro S line', price: 66000, fuel: 'Elektrisch', transmission: 'Automaat', location: 'Den Haag' },
+            { id: 'WB018', make: 'Hyundai', model: 'IONIQ 6', trim: 'Long Range AWD', price: 58500, fuel: 'Elektrisch', transmission: 'Automaat', location: 'Den Haag' },
+        ];
+
+        // Simulated conversations for dashboard
+        const conversations = [
+            { id: 'conv1', name: 'Jan de Vries', lastMessage: 'Wanneer kan ik langskomen voor een proefrit?', time: '14:32', level: 'hot', humanMode: false },
+            { id: 'conv2', name: 'Maria Jansen', lastMessage: 'Wat zijn de financieringsmogelijkheden?', time: '13:15', level: 'warm', humanMode: true },
+            { id: 'conv3', name: 'Peter Bakker', lastMessage: 'Ik zoek een elektrische auto', time: '12:45', level: 'cool', humanMode: false },
+        ];
+
+        // AI Response patterns
+        const responses = {
+            'nieuwe auto': 'Fantastisch dat u een nieuwe auto zoekt! Bij Wittebrug hebben we een breed assortiment van merken zoals Volkswagen, Audi, SEAT, Skoda, CUPRA, Hyundai en meer.\n\nKunt u mij vertellen wat voor type auto u zoekt? Bijvoorbeeld:\n- Compacte auto (Golf, A3, Leon)\n- SUV (Tiguan, Q4 e-tron, Tucson)\n- Elektrisch (ID.4, IONIQ 6)\n- Stationwagen (Octavia Combi, A4 Avant)',
+            'proefrit': 'Een proefrit is een uitstekend idee! Zo kunt u de auto echt ervaren.\n\nOm een proefrit te plannen heb ik het volgende nodig:\n1. Welke auto wilt u testen?\n2. Op welke dag komt het u uit?\n3. Bij welke vestiging? (Den Haag, Voorschoten, Rotterdam, Leiden, De Lier)\n\nMag ik uw naam en telefoonnummer om de afspraak te bevestigen?',
+            'inruilen': 'Natuurlijk kunnen we uw huidige auto inruilen!\n\nVoor een taxatie hebben we de volgende gegevens nodig:\n- Merk en model\n- Bouwjaar\n- Kilometerstand\n- Algemene staat (schade, onderhoud)\n\nKunt u mij deze informatie geven? Dan kan ik u een indicatie geven van de inruilwaarde.',
+            'elektrisch': 'Uitstekende keuze! Elektrisch rijden wordt steeds populairder. Bij Wittebrug hebben we diverse elektrische modellen:\n\n**Volkswagen ID.4** - vanaf €48.500\n- Tot 520km bereik\n- Snelladen tot 135kW\n\n**Audi Q4 e-tron** - vanaf €66.000\n- Quattro vierwielaandrijving\n- Premium interieur\n\n**Hyundai IONIQ 6** - vanaf €58.500\n- Tot 614km bereik\n- 800V ultrasnelladen\n\nWilt u meer informatie over een van deze modellen?',
+            'prijs': 'Voor exacte prijzen en eventuele kortingen adviseer ik u om met een van onze verkoopmedewerkers te spreken. Zij kunnen u een persoonlijke offerte maken.\n\nZal ik u doorverbinden met een collega?',
+            'medewerker': 'Ik schakel u graag door naar een van onze verkoopmedewerkers. Een moment geduld alstublieft, een collega neemt het gesprek zo snel mogelijk over.',
+            'default': 'Bedankt voor uw bericht! Ik help u graag verder.\n\nWaarmee kan ik u helpen?\n- Een nieuwe of gebruikte auto zoeken\n- Een proefrit inplannen\n- Uw auto laten taxeren voor inruil\n- Informatie over financiering of private lease'
+        };
+
+        let isHumanMode = false;
+        let currentConversation = null;
+        let leadData = {
+            name: null,
+            interest: null,
+            budget: null,
+            scores: { budget: 0, authority: 0, need: 0, timeline: 0 }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderInventory();
+            renderConversations();
+        });
+
+        function showView(view) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('customerView').classList.toggle('active', view === 'customer');
+            document.getElementById('dashboardView').classList.toggle('active', view === 'dashboard');
+        }
+
+        function renderInventory() {
+            const grid = document.getElementById('inventoryGrid');
+            grid.innerHTML = inventory.map(car => `
+                <div class="car-card" onclick="selectCar('${car.id}')">
+                    <div class="car-brand">${car.make}</div>
+                    <div class="car-name">${car.model} ${car.trim}</div>
+                    <div class="car-price">€${car.price.toLocaleString('nl-NL')}</div>
+                    <div class="car-details">
+                        <span>${car.fuel}</span>
+                        <span>•</span>
+                        <span>${car.transmission}</span>
+                        <span>•</span>
+                        <span>${car.location}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectCar(carId) {
+            const car = inventory.find(c => c.id === carId);
+            document.querySelectorAll('.car-card').forEach(c => c.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+
+            // Auto-send message about the car
+            sendQuickReply(`Ik ben geïnteresseerd in de ${car.make} ${car.model}`);
+            updateLead({ interest: `${car.make} ${car.model}` });
+            updateScore('need', 6);
+        }
+
+        function renderConversations() {
+            const list = document.getElementById('conversationList');
+            list.innerHTML = conversations.map(conv => `
+                <div class="conversation-item ${currentConversation === conv.id ? 'active' : ''}" onclick="selectConversation('${conv.id}')">
+                    <div class="conv-header">
+                        <span class="conv-name">${conv.name}</span>
+                        <span class="conv-time">${conv.time}</span>
+                    </div>
+                    <div class="conv-preview">${conv.lastMessage}</div>
+                    <div class="conv-badges">
+                        <span class="badge ${conv.level}">${conv.level}</span>
+                        <span class="badge ${conv.humanMode ? 'human' : 'ai'}">${conv.humanMode ? 'Medewerker' : 'AI'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectConversation(convId) {
+            currentConversation = convId;
+            const conv = conversations.find(c => c.id === convId);
+
+            document.querySelectorAll('.conversation-item').forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            document.getElementById('dashboardTitle').textContent = conv.name;
+            document.getElementById('takeOverBtn').style.display = conv.humanMode ? 'none' : 'block';
+            document.getElementById('handBackBtn').style.display = conv.humanMode ? 'block' : 'none';
+            document.getElementById('takeoverBanner').classList.toggle('active', conv.humanMode);
+
+            // Show sample messages
+            document.getElementById('dashboardMessages').innerHTML = `
+                <div class="message agent">
+                    <div class="message-bubble">Welkom bij Wittebrug! Waarmee kan ik u helpen?</div>
+                </div>
+                <div class="message user">
+                    <div class="message-bubble">${conv.lastMessage}</div>
+                </div>
+            `;
+        }
+
+        function takeOver() {
+            if (!currentConversation) return;
+            const conv = conversations.find(c => c.id === currentConversation);
+            conv.humanMode = true;
+
+            document.getElementById('takeOverBtn').style.display = 'none';
+            document.getElementById('handBackBtn').style.display = 'block';
+            document.getElementById('takeoverBanner').classList.add('active');
+            renderConversations();
+            selectConversation(currentConversation);
+        }
+
+        function handBack() {
+            if (!currentConversation) return;
+            const conv = conversations.find(c => c.id === currentConversation);
+            conv.humanMode = false;
+
+            document.getElementById('takeOverBtn').style.display = 'block';
+            document.getElementById('handBackBtn').style.display = 'none';
+            document.getElementById('takeoverBanner').classList.remove('active');
+            renderConversations();
+            selectConversation(currentConversation);
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function sendQuickReply(text) {
+            document.getElementById('chatInput').value = text;
+            sendMessage();
+            document.getElementById('quickReplies').style.display = 'none';
+        }
+
+        function requestHuman() {
+            sendQuickReply('Ik wil graag met een medewerker spreken');
+            setTimeout(() => {
+                setHumanMode(true);
+            }, 2000);
+        }
+
+        function setHumanMode(enabled) {
+            isHumanMode = enabled;
+            document.getElementById('statusDot').classList.toggle('human', enabled);
+            document.getElementById('statusText').textContent = enabled ? 'Medewerker online' : 'Online';
+            document.getElementById('humanBanner').classList.toggle('active', enabled);
+            document.getElementById('requestHumanSection').style.display = enabled ? 'none' : 'block';
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Check for name in message
+            const nameMatch = message.match(/(?:ik ben|mijn naam is|naam:?)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i);
+            if (nameMatch) {
+                updateLead({ name: nameMatch[1] });
+                updateScore('authority', 5);
+            }
+
+            // Check for budget mentions
+            const budgetMatch = message.match(/€?\s*(\d{2,3})[.,]?(\d{3})/);
+            if (budgetMatch) {
+                const budget = parseInt(budgetMatch[1] + budgetMatch[2]);
+                updateLead({ budget: `€${budget.toLocaleString('nl-NL')}` });
+                updateScore('budget', Math.min(10, Math.floor(budget / 10000)));
+            }
+
+            // Show typing indicator
+            showTyping();
+
+            // Generate response
+            setTimeout(() => {
+                hideTyping();
+                const response = getAIResponse(message);
+                addMessage(response, 'agent');
+            }, 1000 + Math.random() * 1000);
+        }
+
+        function getAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+
+            if (lowerMessage.includes('medewerker') || lowerMessage.includes('persoon') || lowerMessage.includes('mens')) {
+                setTimeout(() => setHumanMode(true), 1500);
+                return responses.medewerker;
+            }
+            if (lowerMessage.includes('prijs') || lowerMessage.includes('korting') || lowerMessage.includes('onderhandel')) {
+                return responses.prijs;
+            }
+            if (lowerMessage.includes('nieuwe auto') || lowerMessage.includes('zoek')) {
+                updateScore('need', 5);
+                return responses['nieuwe auto'];
+            }
+            if (lowerMessage.includes('proefrit') || lowerMessage.includes('test')) {
+                updateScore('timeline', 7);
+                return responses.proefrit;
+            }
+            if (lowerMessage.includes('inruil')) {
+                updateScore('budget', 4);
+                return responses.inruilen;
+            }
+            if (lowerMessage.includes('elektrisch') || lowerMessage.includes('ev') || lowerMessage.includes('id.4') || lowerMessage.includes('ioniq')) {
+                updateLead({ interest: 'Elektrische auto' });
+                updateScore('need', 6);
+                return responses.elektrisch;
+            }
+            if (lowerMessage.includes('geïnteresseerd')) {
+                updateScore('need', 7);
+                updateScore('timeline', 5);
+                return 'Dat is een uitstekende keuze! Dit model is direct leverbaar bij onze vestiging.\n\nZal ik een proefrit voor u inplannen? Dan kunt u de auto zelf ervaren.\n\nWelke dag zou u het beste uitkomen?';
+            }
+
+            return responses.default;
+        }
+
+        function addMessage(text, sender) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+
+            const time = new Date().toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+            const senderName = sender === 'user' ? 'U' : (isHumanMode ? 'Wittebrug Medewerker' : 'Wittebrug Assistent');
+
+            div.innerHTML = `
+                <div class="message-bubble">${text.replace(/\n/g, '<br>').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}</div>
+                <div class="message-meta">${senderName} • ${time}</div>
+            `;
+
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTyping() {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.id = 'typingIndicator';
+            div.className = 'typing-indicator';
+            div.innerHTML = '<span></span><span></span><span></span>';
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        function updateLead(data) {
+            Object.assign(leadData, data);
+            if (data.name) document.getElementById('leadName').textContent = data.name;
+            if (data.interest) document.getElementById('leadInterest').textContent = data.interest;
+            if (data.budget) document.getElementById('leadBudget').textContent = data.budget;
+        }
+
+        function updateScore(type, value) {
+            leadData.scores[type] = Math.max(leadData.scores[type], value);
+            document.getElementById(`${type}Score`).style.width = `${value * 10}%`;
+            document.getElementById(`${type}Value`).textContent = value;
+
+            // Update overall status
+            const total = Object.values(leadData.scores).reduce((a, b) => a + b, 0);
+            let level = 'cold';
+            if (total >= 24) level = 'hot';
+            else if (total >= 16) level = 'warm';
+            else if (total >= 8) level = 'cool';
+
+            document.getElementById('leadStatus').innerHTML = `<span class="badge ${level}">${level === 'hot' ? 'Hot' : level === 'warm' ? 'Warm' : level === 'cool' ? 'Koel' : 'Nieuw'}</span>`;
+        }
+    </script>
+</body>
+</html>
