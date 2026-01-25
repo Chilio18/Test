@@ -457,11 +457,13 @@ async def add_lead_note(conversation_id: str, request: NoteRequest):
 
 def main():
     """Run the server."""
+    import os
     settings = get_settings()
+    port = int(os.environ.get("PORT", settings.port))
     uvicorn.run(
         "main:app",
-        host=settings.host,
-        port=settings.port,
+        host="0.0.0.0",
+        port=port,
         reload=settings.debug
     )
 
