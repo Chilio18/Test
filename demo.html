@@ -538,6 +538,13 @@
         }
 
         .dashboard-view.active { display: flex; }
+
+        .customer-view {
+            display: none;
+            flex: 1;
+            gap: 32px;
+        }
+
         .customer-view.active { display: flex; }
 
         .dashboard-sidebar {
@@ -701,8 +708,8 @@
             </div>
         </div>
         <nav class="nav-tabs">
-            <button class="nav-tab active" onclick="showView('customer')">Klant Chat</button>
-            <button class="nav-tab" onclick="showView('dashboard')">Verkoper Dashboard</button>
+            <button class="nav-tab active" onclick="showView('customer', this)">Klant Chat</button>
+            <button class="nav-tab" onclick="showView('dashboard', this)">Verkoper Dashboard</button>
         </nav>
     </header>
 
@@ -902,9 +909,9 @@
             renderConversations();
         });
 
-        function showView(view) {
+        function showView(view, btn) {
             document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
+            if (btn) btn.classList.add('active');
 
             document.getElementById('customerView').classList.toggle('active', view === 'customer');
             document.getElementById('dashboardView').classList.toggle('active', view === 'dashboard');
@@ -913,7 +920,7 @@
         function renderInventory() {
             const grid = document.getElementById('inventoryGrid');
             grid.innerHTML = inventory.map(car => `
-                <div class="car-card" onclick="selectCar('${car.id}')">
+                <div class="car-card" onclick="selectCar('${car.id}', this)">
                     <div class="car-brand">${car.make}</div>
                     <div class="car-name">${car.model} ${car.trim}</div>
                     <div class="car-price">€${car.price.toLocaleString('nl-NL')}</div>
@@ -928,10 +935,10 @@
             `).join('');
         }
 
-        function selectCar(carId) {
+        function selectCar(carId, element) {
             const car = inventory.find(c => c.id === carId);
             document.querySelectorAll('.car-card').forEach(c => c.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
+            if (element) element.classList.add('selected');
 
             // Auto-send message about the car
             sendQuickReply(`Ik ben geïnteresseerd in de ${car.make} ${car.model}`);
@@ -942,7 +949,7 @@
         function renderConversations() {
             const list = document.getElementById('conversationList');
             list.innerHTML = conversations.map(conv => `
-                <div class="conversation-item ${currentConversation === conv.id ? 'active' : ''}" onclick="selectConversation('${conv.id}')">
+                <div class="conversation-item ${currentConversation === conv.id ? 'active' : ''}" onclick="selectConversation('${conv.id}', this)">
                     <div class="conv-header">
                         <span class="conv-name">${conv.name}</span>
                         <span class="conv-time">${conv.time}</span>
@@ -956,12 +963,12 @@
             `).join('');
         }
 
-        function selectConversation(convId) {
+        function selectConversation(convId, element) {
             currentConversation = convId;
             const conv = conversations.find(c => c.id === convId);
 
             document.querySelectorAll('.conversation-item').forEach(c => c.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            if (element) element.classList.add('active');
 
             document.getElementById('dashboardTitle').textContent = conv.name;
             document.getElementById('takeOverBtn').style.display = conv.humanMode ? 'none' : 'block';
