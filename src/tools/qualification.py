@@ -263,6 +263,33 @@ class QualificationTools:
                     },
                     "required": ["lead_id"]
                 }
+            },
+            {
+                "name": "request_human_handoff",
+                "description": "Request a human salesperson to take over the conversation. Use this when the customer explicitly asks to speak with a human, or when the conversation requires human expertise (price negotiations, complex financing, complaints, etc.).",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "lead_id": {
+                            "type": "string",
+                            "description": "The lead ID"
+                        },
+                        "reason": {
+                            "type": "string",
+                            "description": "Reason for requesting handoff (e.g., 'customer requested human', 'price negotiation', 'complex question')"
+                        },
+                        "summary": {
+                            "type": "string",
+                            "description": "Brief summary of the conversation so far for the salesperson"
+                        },
+                        "priority": {
+                            "type": "string",
+                            "enum": ["low", "normal", "high", "urgent"],
+                            "description": "Priority level for the handoff request"
+                        }
+                    },
+                    "required": ["lead_id", "reason"]
+                }
             }
         ]
 
@@ -506,6 +533,38 @@ class QualificationTools:
         """Get a lead by ID (internal use)."""
         return self._leads.get(lead_id)
 
+    def request_human_handoff(
+        self,
+        lead_id: str,
+        reason: str,
+        summary: Optional[str] = None,
+        priority: str = "normal"
+    ) -> dict:
+        """Request human handoff for the conversation."""
+        if lead_id not in self._leads:
+            return {"success": False, "error": "Lead not found"}
+
+        lead = self._leads[lead_id]
+
+        # Add note about handoff request
+        handoff_note = f"HANDOFF REQUESTED [{priority.upper()}]: {reason}"
+        if summary:
+            handoff_note += f"\nSamenvatting: {summary}"
+        lead.add_note(handoff_note)
+
+        # Mark lead as needing human attention
+        lead.needs_human_attention = True
+        lead.handoff_reason = reason
+        lead.handoff_priority = priority
+        lead.updated_at = datetime.now()
+
+        return {
+            "success": True,
+            "handoff_requested": True,
+            "priority": priority,
+            "message": "Een medewerker is gevraagd om het gesprek over te nemen. De klant wordt zo snel mogelijk geholpen."
+        }
+
     def handle_tool_call(self, tool_name: str, tool_input: dict) -> dict:
         """Handle a tool call from the agent."""
         handlers = {
@@ -516,7 +575,8 @@ class QualificationTools:
             "update_lead_trade_in": self.update_lead_trade_in,
             "update_lead_status": self.update_lead_status,
             "add_lead_note": self.add_lead_note,
-            "get_lead_summary": self.get_lead_summary
+            "get_lead_summary": self.get_lead_summary,
+            "request_human_handoff": self.request_human_handoff
         }
 
         if tool_name in handlers:

@@ -98,6 +98,11 @@ class Lead(BaseModel):
     # Assignment
     assigned_salesperson: Optional[str] = None
 
+    # Human Handoff
+    needs_human_attention: bool = False
+    handoff_reason: Optional[str] = None
+    handoff_priority: str = "normal"
+
     def add_note(self, note: str) -> None:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
         self.notes.append(f"[{timestamp}] {note}")

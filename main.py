@@ -285,17 +285,27 @@ async def chat(request: ChatRequest):
     # Store response
     update_conversation_activity(conversation_id, response, is_user=False)
 
-    # Get lead info
+    # Get lead info and check for handoff request
     lead_summary = agent.get_lead_summary(conversation_id)
+    handoff_requested = False
     if lead_summary and lead_summary.get("found"):
         lead = lead_summary["lead"]
         meta["customer_name"] = lead.get("name") or meta["customer_name"]
         meta["qualification_level"] = lead.get("qualification", {}).get("level", "cold")
 
+        # Check if AI requested human handoff
+        lead_obj = agent.get_lead_for_conversation(conversation_id)
+        if lead_obj and getattr(lead_obj, 'needs_human_attention', False):
+            handoff_requested = True
+            meta["needs_human_attention"] = True
+            meta["handoff_reason"] = getattr(lead_obj, 'handoff_reason', None)
+            meta["handoff_priority"] = getattr(lead_obj, 'handoff_priority', 'normal')
+
     return {
         "response": response,
         "conversation_id": conversation_id,
-        "human_mode": False
+        "human_mode": False,
+        "handoff_requested": handoff_requested
     }
 
 
@@ -332,13 +342,23 @@ async def list_conversations():
                 "last_activity": meta.get("last_activity"),
                 "human_mode": meta.get("human_mode", False),
                 "unread": meta.get("unread", False),
-                "qualification_level": "cold"
+                "qualification_level": "cold",
+                "needs_human_attention": meta.get("needs_human_attention", False),
+                "handoff_reason": meta.get("handoff_reason"),
+                "handoff_priority": meta.get("handoff_priority", "normal")
             }
 
             if lead_summary and lead_summary.get("found"):
                 lead = lead_summary["lead"]
                 conv_data["customer_name"] = lead.get("name") or conv_data["customer_name"]
                 conv_data["qualification_level"] = lead.get("qualification", {}).get("level", "cold")
+
+            # Check for handoff request from lead object
+            lead_obj = agent.get_lead_for_conversation(conv_id)
+            if lead_obj and getattr(lead_obj, 'needs_human_attention', False):
+                conv_data["needs_human_attention"] = True
+                conv_data["handoff_reason"] = getattr(lead_obj, 'handoff_reason', None)
+                conv_data["handoff_priority"] = getattr(lead_obj, 'handoff_priority', 'normal')
 
             conversations.append(conv_data)
 

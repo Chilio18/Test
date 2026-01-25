@@ -194,13 +194,19 @@ function setHumanMode(enabled) {
     isHumanMode = enabled;
     const statusDot = document.getElementById('statusDot');
     const statusText = document.getElementById('statusText');
+    const humanBanner = document.getElementById('humanBanner');
+    const requestHumanSection = document.getElementById('requestHumanSection');
 
     if (enabled) {
         statusDot.classList.add('human');
         statusText.textContent = 'Medewerker online';
+        if (humanBanner) humanBanner.style.display = 'flex';
+        if (requestHumanSection) requestHumanSection.style.display = 'none';
     } else {
         statusDot.classList.remove('human');
         statusText.textContent = 'Online';
+        if (humanBanner) humanBanner.style.display = 'none';
+        if (requestHumanSection) requestHumanSection.style.display = 'block';
     }
 }
 

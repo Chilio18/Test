@@ -360,6 +360,54 @@ body {
   color: var(--white);
 }
 
+/* Human assistance banner */
+.human-banner {
+  padding: 10px 16px;
+  background: var(--info);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.human-banner .human-icon {
+  font-size: 16px;
+}
+
+/* Request human button */
+.request-human {
+  padding: 8px 16px;
+  border-top: 1px solid var(--gray-200);
+  background: var(--gray-50);
+}
+
+.request-human-btn {
+  width: 100%;
+  padding: 10px 16px;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--gray-600);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all var(--transition);
+}
+
+.request-human-btn:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-400);
+  color: var(--gray-700);
+}
+
+.request-human-btn svg {
+  fill: currentColor;
+}
+
 /* ============================================
    Salesperson Dashboard
    ============================================ */
