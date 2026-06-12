@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply bg-gray-950 text-gray-100 antialiased; }
+  * { @apply border-gray-800; }
+}
+@layer components {
+  .card { @apply bg-gray-900 border border-gray-800 rounded-xl p-6; }
+  .card-sm { @apply bg-gray-900 border border-gray-800 rounded-lg p-4; }
+  .badge-status { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium; }
+}
+@layer utilities {
+  .text-gradient { @apply bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent; }
+  .scrollbar-thin { scrollbar-width: thin; scrollbar-color: rgb(55 65 81) transparent; }
+}
+.page-enter-active, .page-leave-active { transition: opacity 0.15s ease, transform 0.15s ease; }
+.page-enter-from, .page-leave-to { opacity: 0; transform: translateY(4px); }

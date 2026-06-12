@@ -1,0 +1,38 @@
+{
+  "name": "revenue-intelligence-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev --port 3000",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "type-check": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@nuxt/ui": "^2.18.4",
+    "@nuxtjs/color-mode": "^3.4.2",
+    "@pinia/nuxt": "^0.5.4",
+    "@vee-validate/nuxt": "^4.13.1",
+    "@vee-validate/zod": "^4.13.1",
+    "date-fns": "^3.6.0",
+    "nuxt": "^3.12.4",
+    "pinia": "^2.2.0",
+    "vue": "^3.4.35",
+    "vue-router": "^4.4.0",
+    "zod": "^3.23.8",
+    "@microsoft/signalr": "^8.0.7",
+    "chart.js": "^4.4.3",
+    "vue-chartjs": "^5.3.1"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "^1.3.12",
+    "@nuxt/eslint": "^0.3.13",
+    "@nuxtjs/tailwindcss": "^6.12.1",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.8.0",
+    "typescript": "^5.5.4"
+  }
+}
