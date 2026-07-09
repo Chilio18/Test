@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Borst Automotive — Voice Lead Assistent (PoC)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Borst Automotive</h1>
+    <p class="subtitle">Telefonische AI-leadassistent — proof of concept</p>
+    <p id="mode-banner" class="mode-banner hidden"></p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Nieuwe lead bellen</h2>
+      <form id="call-form">
+        <div class="field">
+          <label for="phoneNumber">Telefoonnummer</label>
+          <input id="phoneNumber" name="phoneNumber" type="tel"
+                 placeholder="+31 6 12345678" required />
+        </div>
+        <div class="field">
+          <label for="model">Model van interesse</label>
+          <input id="model" name="model" type="text"
+                 placeholder="bijv. Volkswagen Tiguan" required />
+        </div>
+        <div class="field">
+          <label for="language">Taal</label>
+          <select id="language" name="language">
+            <option value="auto" selected>Auto-detect</option>
+            <option value="nl">Nederlands</option>
+            <option value="en">Engels</option>
+            <option value="da">Deens</option>
+          </select>
+        </div>
+        <button type="submit" id="call-button">📞 Bel lead</button>
+        <p id="form-message" class="form-message"></p>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Recente calls &amp; leads</h2>
+      <div id="lead-list" class="lead-list">
+        <p class="muted">Laden…</p>
+      </div>
+    </section>
+
+    <section class="card hidden" id="detail-card">
+      <div class="detail-header">
+        <h2>Leadrapport</h2>
+        <button type="button" id="close-detail" class="ghost">Sluiten</button>
+      </div>
+      <div id="lead-detail"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

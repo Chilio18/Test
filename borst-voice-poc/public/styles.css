@@ -1,0 +1,158 @@
+:root {
+  --bg: #f4f5f7;
+  --card: #ffffff;
+  --text: #1c2733;
+  --muted: #64707d;
+  --accent: #0f62fe;
+  --accent-dark: #0043ce;
+  --border: #dde1e6;
+  --ok: #1b8a3f;
+  --busy: #b7791f;
+  --fail: #c62828;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  background: #101820;
+  color: #fff;
+  padding: 1.5rem 2rem 1.25rem;
+}
+header h1 { margin: 0; font-size: 1.4rem; letter-spacing: 0.02em; }
+.subtitle { margin: 0.25rem 0 0; color: #aab4bf; font-size: 0.95rem; }
+.mode-banner {
+  margin: 0.75rem 0 0;
+  display: inline-block;
+  background: #2d3a48;
+  color: #ffd166;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+main {
+  max-width: 900px;
+  margin: 1.5rem auto 3rem;
+  padding: 0 1rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+.card h2 { margin: 0 0 1rem; font-size: 1.05rem; }
+
+form { display: grid; gap: 0.85rem; max-width: 420px; }
+.field { display: grid; gap: 0.3rem; }
+label { font-size: 0.85rem; font-weight: 600; color: var(--muted); }
+input, select {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #fff;
+}
+input:focus, select:focus { outline: 2px solid var(--accent); border-color: transparent; }
+
+button {
+  padding: 0.65rem 1rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:hover { background: var(--accent-dark); }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+button.ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  font-weight: 500;
+}
+
+.form-message { min-height: 1.2em; margin: 0; font-size: 0.85rem; }
+.form-message.error { color: var(--fail); }
+.form-message.ok { color: var(--ok); }
+
+.lead-list { display: grid; gap: 0.6rem; }
+.lead-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  background: #fff;
+}
+.lead-row:hover { border-color: var(--accent); }
+.lead-main { flex: 1; min-width: 0; }
+.lead-model { font-weight: 600; }
+.lead-phone { color: var(--muted); font-size: 0.85rem; }
+.lead-meta { text-align: right; font-size: 0.8rem; color: var(--muted); }
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.badge.not_called { background: #e8eaee; color: var(--muted); }
+.badge.queued { background: #fff3d6; color: var(--busy); }
+.badge.in_progress { background: #dbeafe; color: var(--accent-dark); }
+.badge.completed { background: #ddf3e4; color: var(--ok); }
+.badge.failed { background: #fde2e2; color: var(--fail); }
+
+.score { font-weight: 700; }
+
+.detail-header { display: flex; justify-content: space-between; align-items: center; }
+.detail-header h2 { margin: 0; }
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.report-item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+}
+.report-item .k { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.report-item .v { margin-top: 0.15rem; font-size: 0.92rem; }
+
+.summary-block, .transcript-block {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  background: #fafbfc;
+}
+.summary-block h3, .transcript-block h3 { margin: 0 0 0.4rem; font-size: 0.85rem; color: var(--muted); }
+.transcript-block pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.muted { color: var(--muted); }
+.hidden { display: none; }

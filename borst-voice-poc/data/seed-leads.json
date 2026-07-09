@@ -1,0 +1,89 @@
+[
+  {
+    "id": "5c1a9d2e-0001-4d6b-8f7a-seedlead0001",
+    "phoneNumber": "+31612345678",
+    "model": "Volkswagen Tiguan",
+    "language": "nl",
+    "status": "completed",
+    "callProvider": "mock",
+    "callId": "mock_seed_0001",
+    "createdAt": "2026-07-08T09:15:00.000Z",
+    "updatedAt": "2026-07-08T09:22:00.000Z",
+    "statusHistory": [
+      { "status": "not_called", "at": "2026-07-08T09:15:00.000Z" },
+      { "status": "queued", "at": "2026-07-08T09:16:00.000Z" },
+      { "status": "in_progress", "at": "2026-07-08T09:16:30.000Z" },
+      { "status": "completed", "at": "2026-07-08T09:22:00.000Z", "detail": "Gesprek afgerond, leadrapport opgeslagen" }
+    ],
+    "report": {
+      "language": "nl",
+      "appointmentRequested": true,
+      "preferredMoments": ["donderdagmiddag", "zaterdag rond 10:00"],
+      "appointmentType": "combinatie",
+      "summary": "Prospect zoekt een gezinsauto ter vervanging van een Golf. Interesse in de Tiguan als hybride met automaat en trekhaak voor de caravan. Er is een inruilauto. Afspraak gewenst voor proefrit met offertegesprek en inruiltaxatie.",
+      "usage": "Gezin, vakanties met caravan, woon-werkverkeer",
+      "desiredOptions": ["automaat", "trekhaak", "adaptieve cruise control", "camera"],
+      "fuelPreference": "plug-in hybride",
+      "buyOrLease": "kopen",
+      "businessOrPrivate": "particulier",
+      "tradeIn": true,
+      "tradeInLicensePlate": "XK-482-P",
+      "tradeInMileage": "ca. 120.000 km",
+      "objections": ["twijfelt over trekgewicht van de plug-in hybride"],
+      "leadScore": 5,
+      "recommendedNextStep": "Afspraak bevestigen voor zaterdag 10:00 en trekgewicht-specificaties van de Tiguan PHEV klaarleggen.",
+      "transcript": "Agent: Goedemiddag, u spreekt met de telefonische assistent van Borst Automotive...\nProspect: Ja, dat komt gelegen...\n(voorbeeldtranscript uit seed-data)"
+    }
+  },
+  {
+    "id": "5c1a9d2e-0002-4d6b-8f7a-seedlead0002",
+    "phoneNumber": "+4521436587",
+    "model": "Skoda Octavia Combi",
+    "language": "da",
+    "status": "completed",
+    "callProvider": "mock",
+    "callId": "mock_seed_0002",
+    "createdAt": "2026-07-08T13:40:00.000Z",
+    "updatedAt": "2026-07-08T13:46:00.000Z",
+    "statusHistory": [
+      { "status": "not_called", "at": "2026-07-08T13:40:00.000Z" },
+      { "status": "queued", "at": "2026-07-08T13:41:00.000Z" },
+      { "status": "in_progress", "at": "2026-07-08T13:41:30.000Z" },
+      { "status": "completed", "at": "2026-07-08T13:46:00.000Z", "detail": "Gesprek afgerond, leadrapport opgeslagen" }
+    ],
+    "report": {
+      "language": "da",
+      "appointmentRequested": false,
+      "preferredMoments": [],
+      "appointmentType": null,
+      "summary": "Deense prospect oriënteert zich op een Octavia Combi als zakelijke leaseauto. Wil eerst intern budget afstemmen en vraagt om over twee weken opnieuw contact op te nemen. Geen afspraak gepland.",
+      "usage": "Zakelijk, veel snelwegkilometers",
+      "desiredOptions": ["navigatie", "stoelverwarming"],
+      "fuelPreference": "diesel of hybride, nog open",
+      "buyOrLease": "leasen",
+      "businessOrPrivate": "zakelijk",
+      "tradeIn": false,
+      "tradeInLicensePlate": null,
+      "tradeInMileage": null,
+      "objections": ["budget nog niet intern goedgekeurd"],
+      "leadScore": 3,
+      "recommendedNextStep": "Over twee weken nabellen zodra het leasebudget intern is goedgekeurd.",
+      "transcript": "Agent: Goddag, du taler med telefonassistenten hos Borst Automotive...\nProspect: Ja, det passer fint...\n(voorbeeldtranscript uit seed-data)"
+    }
+  },
+  {
+    "id": "5c1a9d2e-0003-4d6b-8f7a-seedlead0003",
+    "phoneNumber": "+31687654321",
+    "model": "Kia EV6",
+    "language": "auto",
+    "status": "not_called",
+    "callProvider": null,
+    "callId": null,
+    "createdAt": "2026-07-09T08:05:00.000Z",
+    "updatedAt": "2026-07-09T08:05:00.000Z",
+    "statusHistory": [
+      { "status": "not_called", "at": "2026-07-09T08:05:00.000Z" }
+    ],
+    "report": null
+  }
+]
