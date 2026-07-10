@@ -5,10 +5,16 @@
  * in te vullen telefoonnummer.
  *
  * Gebruik:
- *   npx tsx scripts/create-assistant.ts [--model "Volkswagen Tiguan"] [--nl-only]
+ *   npx tsx scripts/create-assistant.ts [--model "Volkswagen Tiguan"] [--nl-only] [--stack pipeline|realtime]
  *
  * --nl-only: de agent spreekt uitsluitend Nederlands (geen taaldetectie),
  * en de spraakherkenning staat vast op Nederlands.
+ *
+ * --stack pipeline (standaard): GPT-4o als taalmodel + ElevenLabs als stem.
+ *   Natuurlijk Nederlands accent, geen afgebroken zinnen, geen spontane
+ *   taalwissels in de audio.
+ * --stack realtime: OpenAI gpt-realtime-2 speech-to-speech (lagere latency,
+ *   maar kapt zinnen soms af en spreekt Nederlands met accent).
  */
 import { config } from '../src/config';
 import { buildAgentPrompt, firstMessage, makeDutchOnly } from '../src/prompts/automotive-agent';
@@ -22,6 +28,7 @@ function arg(name: string): string | undefined {
 
 const carModel = arg('model') ?? 'Volkswagen Tiguan';
 const nlOnly = process.argv.includes('--nl-only');
+const stack = (arg('stack') ?? 'pipeline') as 'pipeline' | 'realtime';
 
 // Testvariant van de prompt: zonder tool-sectie (er is geen webhook die
 // tool calls kan ontvangen zolang de app niet gehost is).
@@ -43,10 +50,17 @@ const assistantConfig = {
   firstMessage: firstMessage(carModel, nlOnly ? 'nl' : 'auto'),
   model: {
     provider: 'openai',
-    model: config.openai.realtimeModel,
+    model: stack === 'realtime' ? config.openai.realtimeModel : config.pipeline.llmModel,
     messages: [{ role: 'system', content: prompt }],
   },
-  voice: { provider: 'openai', voiceId: config.openai.realtimeVoice },
+  voice:
+    stack === 'realtime'
+      ? { provider: 'openai', voiceId: config.openai.realtimeVoice }
+      : {
+          provider: '11labs',
+          voiceId: config.elevenlabs.voiceId,
+          model: config.elevenlabs.model,
+        },
   // Bij --nl-only staat ook de spraakherkenning vast op Nederlands, zodat
   // de agent Nederlandse sprekers niet per ongeluk als Engels/Deens verstaat.
   ...(nlOnly
@@ -89,6 +103,7 @@ async function main() {
   console.log('  id   :', assistant.id);
   console.log('  naam :', assistant.name);
   console.log('  llm  :', assistant.model?.model);
+  console.log('  stem :', assistant.voice?.provider, assistant.voice?.voiceId);
 }
 
 main().catch((err) => {

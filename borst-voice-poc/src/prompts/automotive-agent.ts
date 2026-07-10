@@ -41,6 +41,12 @@ export function buildAgentPrompt(params: {
  * Handig als taaldetectie in de praktijk voor verwarring zorgt.
  */
 export function makeDutchOnly(prompt: string): string {
+  const topRule =
+    'BELANGRIJKSTE REGEL — LEES DIT EERST: dit hele gesprek voer je ' +
+    'UITSLUITEND in het Nederlands. Elke zin die je uitspreekt is ' +
+    'Nederlands, wat je ook denkt te horen. Merk je dat je per ongeluk een ' +
+    'woord of zin in een andere taal zei, schakel dan onmiddellijk en ' +
+    'zonder toelichting terug naar het Nederlands.\n\n';
   const dutchOnlySection = `# Taal en gespreksstijl
 
 Dit gesprek voer je UITSLUITEND in het Nederlands, van begin tot eind.
@@ -57,6 +63,8 @@ Dit gesprek voer je UITSLUITEND in het Nederlands, van begin tot eind.
 Algemene spreekstijl:
 - Dit is een telefoongesprek: korte, natuurlijke zinnen. Geen lijstjes,
   geen jargon, geen lange monologen.
+- Maximaal twee korte zinnen en hoogstens één vraag per beurt. Ook de
+  eindsamenvatting knip je op in korte zinnen.
 - Getallen en tijden voluit uitspreken.
 - Laat ruimte voor de prospect; onderbreek niet.
 - Als de prospect aangeeft dat het niet gelegen komt: bied aan op een beter
@@ -75,7 +83,7 @@ Algemene spreekstijl:
   out = out.replace(/\(Gebruik in het Engels en Deens[\s\S]*?\)\n/, '');
   // Verwijzing naar gesprekstaal in het rapportschema neutraliseren.
   out = out.replace(/- taal van het gesprek \(nl \/ en \/ da\)/, '- taal van het gesprek: altijd nl');
-  return out;
+  return topRule + out;
 }
 
 /**

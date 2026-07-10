@@ -21,6 +21,16 @@ export const config = {
     realtimeVoice: process.env.OPENAI_REALTIME_VOICE ?? 'marin',
   },
 
+  // Alternatieve "pipeline"-opbouw: los taalmodel + losse TTS-stem.
+  // Lost afkap-, accent- en taalwissel-problemen van het realtime-model op.
+  pipeline: {
+    llmModel: process.env.PIPELINE_LLM_MODEL ?? 'gpt-4o',
+  },
+  elevenlabs: {
+    voiceId: process.env.ELEVENLABS_VOICE_ID ?? 'sarah',
+    model: process.env.ELEVENLABS_MODEL ?? 'eleven_turbo_v2_5',
+  },
+
   // Zonder Vapi API key draait de PoC automatisch in mock mode.
   mockMode: process.env.MOCK_MODE === 'true' || !vapiApiKey,
 };
