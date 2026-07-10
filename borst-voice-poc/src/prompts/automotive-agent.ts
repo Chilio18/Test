@@ -65,6 +65,8 @@ Algemene spreekstijl:
 `;
   // Vervang de meertalige taalsectie.
   let out = prompt.replace(/# Talen en gespreksstijl[\s\S]*?(?=# Openingszinnen)/, dutchOnlySection);
+  // Verwijs in de stem-sectie niet naar Engels/Deens.
+  out = out.replace(/- Spreek je Engels of Deens[\s\S]*?moedertaalspreker\.\n/, '');
   // Alleen de Nederlandse openingszin behouden.
   out = out.replace(/\*\*Engels:\*\*[\s\S]*?(?=# Voorbeeldantwoorden)/, '');
   out = out.replace(/\(Pas "goedemiddag[^)]*\)\s*/, '');
@@ -78,27 +80,28 @@ Algemene spreekstijl:
 
 /**
  * Openingszin per taal; bij 'auto' openen we in het Nederlands.
- * Bewust kort gehouden (< ~6 seconden spreektijd): het OpenAI-realtime-model
- * kapt langere vaste openingen soms halverwege af. De agent noemt de reden
- * van het gesprek in de tweede beurt (zie agent-prompt.md, Openingszinnen).
+ * Maximaal ~7 seconden spreektijd: het OpenAI-realtime-model kapt vaste
+ * openingen vanaf ~8 seconden halverwege af. De agent licht de reden van
+ * het gesprek verder toe in de tweede beurt (zie agent-prompt.md).
  */
-export function firstMessage(_model: string, language: Language): string {
+export function firstMessage(model: string, language: Language): string {
   switch (language) {
     case 'en':
       return (
         'Good afternoon, you are speaking with the phone assistant of Borst Automotive. ' +
-        'Is this a good time?'
+        `I'm calling about your interest in the ${model}. Is this a good time?`
       );
     case 'da':
       return (
-        'Goddag, du taler med telefonassistenten hos Borst Automotive. Passer det nu?'
+        'Goddag, du taler med telefonassistenten hos Borst Automotive. ' +
+        `Jeg ringer angående din interesse for ${model}. Passer det nu?`
       );
     case 'nl':
     case 'auto':
     default:
       return (
         'Goedemiddag, u spreekt met de telefonische assistent van Borst Automotive. ' +
-        'Bel ik gelegen?'
+        `Ik bel over uw interesse in de ${model}. Komt het gelegen?`
       );
   }
 }
