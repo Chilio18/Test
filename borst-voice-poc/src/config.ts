@@ -29,6 +29,8 @@ export const config = {
   elevenlabs: {
     voiceId: process.env.ELEVENLABS_VOICE_ID ?? 'sarah',
     model: process.env.ELEVENLABS_MODEL ?? 'eleven_turbo_v2_5',
+    // Iets rustiger dan standaard (1.0); bereik 0.7–1.2.
+    speed: Number(process.env.ELEVENLABS_SPEED ?? 0.9),
   },
 
   // Zonder Vapi API key draait de PoC automatisch in mock mode.

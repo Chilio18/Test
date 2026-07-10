@@ -60,6 +60,12 @@ const assistantConfig = {
           provider: '11labs',
           voiceId: config.elevenlabs.voiceId,
           model: config.elevenlabs.model,
+          speed: config.elevenlabs.speed,
+          stability: 0.5,
+          similarityBoost: 0.75,
+          // Expliciete taalcode: laat de stem Nederlands als Nederlands
+          // uitspreken i.p.v. met Engelse klankkleur.
+          ...(nlOnly ? { language: 'nl' } : {}),
         },
   // Bij --nl-only staat ook de spraakherkenning vast op Nederlands, zodat
   // de agent Nederlandse sprekers niet per ongeluk als Engels/Deens verstaat.
