@@ -5,10 +5,13 @@
  * in te vullen telefoonnummer.
  *
  * Gebruik:
- *   npx tsx scripts/create-assistant.ts [--model "Volkswagen Tiguan"]
+ *   npx tsx scripts/create-assistant.ts [--model "Volkswagen Tiguan"] [--nl-only]
+ *
+ * --nl-only: de agent spreekt uitsluitend Nederlands (geen taaldetectie),
+ * en de spraakherkenning staat vast op Nederlands.
  */
 import { config } from '../src/config';
-import { buildAgentPrompt, firstMessage } from '../src/prompts/automotive-agent';
+import { buildAgentPrompt, firstMessage, makeDutchOnly } from '../src/prompts/automotive-agent';
 
 const NAME = 'Borst Automotive Leadassistent';
 
@@ -18,14 +21,16 @@ function arg(name: string): string | undefined {
 }
 
 const carModel = arg('model') ?? 'Volkswagen Tiguan';
+const nlOnly = process.argv.includes('--nl-only');
 
 // Testvariant van de prompt: zonder tool-sectie (er is geen webhook die
 // tool calls kan ontvangen zolang de app niet gehost is).
 let prompt = buildAgentPrompt({
   model: carModel,
-  language: 'auto',
+  language: nlOnly ? 'nl' : 'auto',
   phoneNumber: 'het nummer waarop we de prospect nu bellen',
 });
+if (nlOnly) prompt = makeDutchOnly(prompt);
 prompt = prompt.replace(/# Tool-instructies[\s\S]*$/m, '').trim();
 prompt +=
   '\n\n# Testmodus\n\n' +
@@ -35,13 +40,18 @@ prompt +=
 
 const assistantConfig = {
   name: NAME,
-  firstMessage: firstMessage(carModel, 'auto'),
+  firstMessage: firstMessage(carModel, nlOnly ? 'nl' : 'auto'),
   model: {
     provider: 'openai',
     model: config.openai.realtimeModel,
     messages: [{ role: 'system', content: prompt }],
   },
   voice: { provider: 'openai', voiceId: config.openai.realtimeVoice },
+  // Bij --nl-only staat ook de spraakherkenning vast op Nederlands, zodat
+  // de agent Nederlandse sprekers niet per ongeluk als Engels/Deens verstaat.
+  ...(nlOnly
+    ? { transcriber: { provider: 'deepgram', model: 'nova-2', language: 'nl' } }
+    : {}),
   maxDurationSeconds: 600,
 };
 

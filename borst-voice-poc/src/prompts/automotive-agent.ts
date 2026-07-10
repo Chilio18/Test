@@ -32,6 +32,48 @@ export function buildAgentPrompt(params: {
     .replaceAll('{{PHONE_NUMBER}}', params.phoneNumber);
 }
 
+/**
+ * Zet de meertalige prompt om naar een strikt Nederlandstalige variant:
+ * de taalsectie wordt vervangen door een harde "alleen Nederlands"-regel en
+ * de Engelse/Deense openingszinnen en voorbeeldantwoorden worden verwijderd.
+ * Handig als taaldetectie in de praktijk voor verwarring zorgt.
+ */
+export function makeDutchOnly(prompt: string): string {
+  const dutchOnlySection = `# Taal en gespreksstijl
+
+Dit gesprek voer je UITSLUITEND in het Nederlands, van begin tot eind.
+
+- Spreek vriendelijk, professioneel en in verzorgd ABN. Spreek de prospect
+  aan met "u".
+- Wissel NOOIT van taal, ook niet als de prospect in een andere taal
+  antwoordt of daarom vraagt.
+- Antwoordt de prospect in een andere taal, zeg dan vriendelijk in het
+  Nederlands: "Excuses, ik kan dit gesprek alleen in het Nederlands voeren.
+  Als u dat prettiger vindt, laat ik een collega u terugbellen." Kan het
+  gesprek niet in het Nederlands verder, rond dan vriendelijk af.
+
+Algemene spreekstijl:
+- Dit is een telefoongesprek: korte, natuurlijke zinnen. Geen lijstjes,
+  geen jargon, geen lange monologen.
+- Getallen en tijden voluit uitspreken.
+- Laat ruimte voor de prospect; onderbreek niet.
+- Als de prospect aangeeft dat het niet gelegen komt: bied aan op een beter
+  moment terug te bellen, noteer dat moment en rond vriendelijk af.
+
+`;
+  // Vervang de meertalige taalsectie.
+  let out = prompt.replace(/# Talen en gespreksstijl[\s\S]*?(?=# Openingszinnen)/, dutchOnlySection);
+  // Alleen de Nederlandse openingszin behouden.
+  out = out.replace(/\*\*Engels:\*\*[\s\S]*?(?=# Voorbeeldantwoorden)/, '');
+  out = out.replace(/\(Pas "goedemiddag[^)]*\)\s*/, '');
+  // Engelse en Deense voorbeeldantwoorden verwijderen.
+  out = out.replace(/\*\*(Price\/discount \(EN\)|Pris\/rabat \(DA\)|Delivery time \(EN\)|Leveringstid \(DA\)):\*\*\n"[\s\S]*?"\n\n/g, '');
+  out = out.replace(/\(Gebruik in het Engels en Deens[\s\S]*?\)\n/, '');
+  // Verwijzing naar gesprekstaal in het rapportschema neutraliseren.
+  out = out.replace(/- taal van het gesprek \(nl \/ en \/ da\)/, '- taal van het gesprek: altijd nl');
+  return out;
+}
+
 /** Openingszin per taal; bij 'auto' openen we in het Nederlands. */
 export function firstMessage(model: string, language: Language): string {
   switch (language) {
