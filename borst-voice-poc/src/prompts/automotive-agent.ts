@@ -76,31 +76,29 @@ Algemene spreekstijl:
   return out;
 }
 
-/** Openingszin per taal; bij 'auto' openen we in het Nederlands. */
-export function firstMessage(model: string, language: Language): string {
+/**
+ * Openingszin per taal; bij 'auto' openen we in het Nederlands.
+ * Bewust kort gehouden (< ~6 seconden spreektijd): het OpenAI-realtime-model
+ * kapt langere vaste openingen soms halverwege af. De agent noemt de reden
+ * van het gesprek in de tweede beurt (zie agent-prompt.md, Openingszinnen).
+ */
+export function firstMessage(_model: string, language: Language): string {
   switch (language) {
     case 'en':
       return (
         'Good afternoon, you are speaking with the phone assistant of Borst Automotive. ' +
-        `You recently showed interest in the ${model}. I'm calling briefly to see how we ` +
-        'can best help you, and perhaps schedule a test drive or a showroom appointment. ' +
         'Is this a good time?'
       );
     case 'da':
       return (
-        'Goddag, du taler med telefonassistenten hos Borst Automotive. ' +
-        `Du har vist interesse for ${model}. Jeg ringer kort for at høre, hvordan vi bedst ` +
-        'kan hjælpe dig, og eventuelt aftale en prøvetur eller et besøg i vores showroom. ' +
-        'Passer det nu?'
+        'Goddag, du taler med telefonassistenten hos Borst Automotive. Passer det nu?'
       );
     case 'nl':
     case 'auto':
     default:
       return (
         'Goedemiddag, u spreekt met de telefonische assistent van Borst Automotive. ' +
-        `U heeft interesse getoond in de ${model}. Ik bel kort om te kijken hoe we u het ` +
-        'beste kunnen helpen en eventueel een proefrit of afspraak in de showroom kunnen ' +
-        'plannen. Komt het gelegen?'
+        'Bel ik gelegen?'
       );
   }
 }
