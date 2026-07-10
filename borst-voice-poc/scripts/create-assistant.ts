@@ -52,6 +52,11 @@ const assistantConfig = {
   ...(nlOnly
     ? { transcriber: { provider: 'deepgram', model: 'nova-2', language: 'nl' } }
     : {}),
+  // Onderbrekingsgevoeligheid: standaard stopt de agent bij elk geluid met
+  // praten (ook echo/achtergrondgeluid). Met numWords: 2 stopt ze pas als de
+  // beller echt minimaal twee woorden zegt.
+  stopSpeakingPlan: { numWords: 2, voiceSeconds: 0.4, backoffSeconds: 1 },
+  startSpeakingPlan: { waitSeconds: 0.5 },
   maxDurationSeconds: 600,
 };
 

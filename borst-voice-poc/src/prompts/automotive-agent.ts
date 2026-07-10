@@ -25,7 +25,9 @@ export function buildAgentPrompt(params: {
   language: Language;
   phoneNumber: string;
 }): string {
-  const template = fs.readFileSync(PROMPT_FILE, 'utf-8');
+  // Het HTML-commentaarblok bovenin agent-prompt.md is documentatie voor
+  // beheerders en hoort niet in de prompt zelf.
+  const template = fs.readFileSync(PROMPT_FILE, 'utf-8').replace(/^<!--[\s\S]*?-->\s*/, '');
   return template
     .replaceAll('{{MODEL_OF_INTEREST}}', params.model)
     .replaceAll('{{LANGUAGE_PREFERENCE}}', LANGUAGE_LABELS[params.language])

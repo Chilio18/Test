@@ -43,6 +43,9 @@ export function buildAssistantConfig(lead: Lead) {
       secret: config.vapi.webhookSecret || undefined,
     },
     serverMessages: ['status-update', 'tool-calls', 'end-of-call-report'],
+    // Niet bij elk geluid stoppen met praten; pas bij minimaal twee woorden.
+    stopSpeakingPlan: { numWords: 2, voiceSeconds: 0.4, backoffSeconds: 1 },
+    startSpeakingPlan: { waitSeconds: 0.5 },
     // Gespreksanalyse van Vapi als vangnet naast onze eigen tool call.
     analysisPlan: {
       summaryPlan: { enabled: true },

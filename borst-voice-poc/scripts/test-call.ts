@@ -54,6 +54,8 @@ async function main() {
         messages: [{ role: 'system', content: prompt }],
       },
       voice: { provider: 'openai', voiceId: config.openai.realtimeVoice },
+      stopSpeakingPlan: { numWords: 2, voiceSeconds: 0.4, backoffSeconds: 1 },
+      startSpeakingPlan: { waitSeconds: 0.5 },
       maxDurationSeconds: 600,
     },
     metadata: { source: 'test-call-script', model, lang },
