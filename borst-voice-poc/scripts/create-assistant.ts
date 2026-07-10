@@ -61,7 +61,9 @@ const assistantConfig = {
           voiceId: config.elevenlabs.voiceId,
           model: config.elevenlabs.model,
           speed: config.elevenlabs.speed,
-          stability: 0.5,
+          // Hogere stability houdt de klankkleur vaster en vermindert
+          // het wegglijden naar een Engels accent bij leenwoorden.
+          stability: 0.65,
           similarityBoost: 0.75,
           // Expliciete taalcode: laat de stem Nederlands als Nederlands
           // uitspreken i.p.v. met Engelse klankkleur.

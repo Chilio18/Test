@@ -42,11 +42,16 @@ export function buildAgentPrompt(params: {
  */
 export function makeDutchOnly(prompt: string): string {
   const topRule =
-    'BELANGRIJKSTE REGEL — LEES DIT EERST: dit hele gesprek voer je ' +
-    'UITSLUITEND in het Nederlands. Elke zin die je uitspreekt is ' +
-    'Nederlands, wat je ook denkt te horen. Merk je dat je per ongeluk een ' +
-    'woord of zin in een andere taal zei, schakel dan onmiddellijk en ' +
-    'zonder toelichting terug naar het Nederlands.\n\n';
+    'BELANGRIJKSTE REGELS — LEES DIT EERST:\n' +
+    '1. Dit hele gesprek voer je UITSLUITEND in het Nederlands. Elke zin ' +
+    'die je uitspreekt is Nederlands, wat je ook denkt te horen. Merk je ' +
+    'dat je per ongeluk een woord of zin in een andere taal zei, schakel ' +
+    'dan onmiddellijk en zonder toelichting terug naar het Nederlands.\n' +
+    '2. Schrijf alle getallen, bedragen en tijden voluit in Nederlandse ' +
+    "woorden ('vijftig kilometer', 'tien uur') en vermijd Engelse woorden " +
+    '— de stem slaat anders om naar een Amerikaans accent.\n' +
+    '3. Maximaal twee korte zinnen en één vraag per beurt; som nooit ' +
+    'meerdere opties op in één vraag.\n\n';
   const dutchOnlySection = `# Taal en gespreksstijl
 
 Dit gesprek voer je UITSLUITEND in het Nederlands, van begin tot eind.
